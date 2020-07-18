@@ -1,5 +1,5 @@
-const Twit = require('twit');
 require('dotenv').config();
+const Twit = require('twit');
 
 const authTwit = () => {
   return new Twit({
