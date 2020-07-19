@@ -4,16 +4,16 @@ const Twit = require('./lib/twit');
 
 const upload = multer();
 
-router.post('/upload', upload.any(), async (req, res) => {
+router.post('/upload', upload.any(), async (req, res, next) => {
   const { tweet } = req.body;
   const file = req.files;
 
-  const [buffer] = file.map((el) => el.buffer);
+  const [base64file] = file.map((el) => el.buffer.toString('base64'));
 
-  if (buffer) {
+  if (base64file) {
     try {
       const uploadFile = await Twit().post('media/upload', {
-        media_data: buffer.toString('base64'),
+        media_data: base64file,
       });
 
       const media_id = uploadFile.data.media_id_string;
@@ -33,7 +33,7 @@ router.post('/upload', upload.any(), async (req, res) => {
         return res.status(201).json(updateStatus);
       }
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 });
